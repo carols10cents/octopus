@@ -1,4 +1,6 @@
 class CreateBooks < ActiveRecord::Migration
+  using(:master)
+
   def change
     create_table :books do |t|
       t.string :title

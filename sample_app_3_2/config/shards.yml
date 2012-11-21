@@ -1,0 +1,17 @@
+octopus:
+  environments:
+    - development
+    - test
+    - production
+  development:
+    album:
+      adapter: sqlite3
+      database: db/dev-album.sqlite3
+  test:
+    album:
+      adapter: sqlite3
+      database: db/test-album.sqlite3
+  production:
+    album:
+      adapter: sqlite3
+      database: db/production-album.sqlite3
