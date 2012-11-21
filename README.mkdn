@@ -157,9 +157,11 @@ Contributors are welcome! To run the test suite, you need mysql, postgresql and 
     git clone http://github.com/tchandy/octopus.git
     cd octopus
     bundle install
-    bundle exec rake db:prepare
+    bundle exec rake db:prepare # See below about database users
     bundle exec rake appraisal:install
     bundle exec rake spec
+
+If you get errors about database usernames, such as `role "postgres" does not exist`, you will probably need to set the environment variables MYSQL_USER and/or POSTGRES_USER. See the Rakefile for more details.
 
 This command will run the spec suite for all rails versions supported (Rails 2.3, Rails 3.0 and Rails 3.1).
 To run our integrations tests inside sample_app, you need to following commands:
