@@ -1,4 +1,6 @@
 class AlbumsController < ApplicationController
+  around_filter :use_album_shard
+
   # GET /albums
   # GET /albums.json
   def index
@@ -79,5 +81,11 @@ class AlbumsController < ApplicationController
       format.html { redirect_to albums_url }
       format.json { head :no_content }
     end
+  end
+
+  protected
+
+  def use_album_shard(&block)
+    Octopus.using(:album, &block)
   end
 end

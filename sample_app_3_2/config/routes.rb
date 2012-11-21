@@ -1,7 +1,6 @@
 SampleApp32::Application.routes.draw do
+  root :to => 'static#homepage'
   resources :albums
-
-
   resources :books
 
 
