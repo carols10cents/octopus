@@ -41,7 +41,7 @@ namespace :db do
     Dir.chdir(File.expand_path("../spec", __FILE__))
 
     require "octopus"
-    require "support/database_connection"
+    require_relative "spec/support/database_connection"
 
     [:master, :brazil, :canada, :russia, :alone_shard, :postgresql_shard, :sqlite_shard].each do |shard_symbol|
       # Rails 3.1 needs to do some introspection around the base class, which requires
