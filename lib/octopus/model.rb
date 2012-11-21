@@ -97,7 +97,7 @@ module Octopus::Model
     end
 
     def should_set_current_shard?
-      self.respond_to?(:current_shard) && !self.current_shard.nil?
+      self.respond_to?(:current_shard) && !self.current_shard.nil? && !self.class.connection_proxy.block
     end
 
     def reload_connection_safe(&block)
