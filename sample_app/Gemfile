@@ -6,7 +6,7 @@ gem 'rails', '3.0.5'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'rake', "~> 0.9"
 gem 'sqlite3-ruby', :require => 'sqlite3'
-gem 'ar-octopus', :git => 'git://github.com/tchandy/octopus.git', :require => "octopus"
+gem 'ar-octopus', :path => ".."
 
 group :test do
   gem 'capybara', "~> 1.1.3"

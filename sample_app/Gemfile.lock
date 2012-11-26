@@ -1,6 +1,5 @@
-GIT
-  remote: git://github.com/tchandy/octopus.git
-  revision: 942676bb3683184d89bd2d06be4cd9b3b3d9931f
+PATH
+  remote: ..
   specs:
     ar-octopus (0.4.0)
       activerecord (>= 2.3.0)
