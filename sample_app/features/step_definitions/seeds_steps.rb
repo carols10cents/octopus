@@ -9,5 +9,12 @@ Then /^the version of "([^"]*)" shard should be "([^"]*)"$/ do |shard_name, vers
 end
 
 When /^I run inside my Rails project "([^"]*)" with environment "([^"]*)"$/ do |command, environment|
-  run("cd #{Rails.root.to_s} && RAILS_ENV=#{environment} #{command}")
+  run("cd #{Rails.root.to_s} && RAILS_ENV=#{environment} bundle exec #{command}")
+end
+
+Then /^I should see file "([^\"]*)"$/ do |path|
+  sleep 2
+  puts "pwd = " + Dir.pwd
+  puts "rails root = " + Rails.root.to_s
+  File.should exist(File.join(Rails.root.to_s, path))
 end

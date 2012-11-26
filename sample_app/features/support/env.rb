@@ -39,18 +39,16 @@ rescue NameError
   raise "You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it."
 end
 
-After do
-  `rm #{Rails.root.to_s}/db/america.sqlite3`
-  `rm #{Rails.root.to_s}/db/asia.sqlite3`
-  `rm #{Rails.root.to_s}/db/development.sqlite3`
-  `rm #{Rails.root.to_s}/db/europe.sqlite3`
-end
-
 Before do
+  `rm #{Rails.root.to_s}/db/development.sqlite3`
   `rm #{Rails.root.to_s}/db/america.sqlite3`
   `rm #{Rails.root.to_s}/db/asia.sqlite3`
-  `rm #{Rails.root.to_s}/db/development.sqlite3`
   `rm #{Rails.root.to_s}/db/europe.sqlite3`
+
+  `rm #{Rails.root.to_s}/db/test.sqlite3`
+  `rm #{Rails.root.to_s}/db/test_america.sqlite3`
+  `rm #{Rails.root.to_s}/db/test_asia.sqlite3`
+  `rm #{Rails.root.to_s}/db/test_europe.sqlite3`
 end
 
 
