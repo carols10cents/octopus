@@ -6,12 +6,20 @@ require "yaml"
 require "erb"
 
 module Octopus
+  module Rails
+    class Railtie < ::Rails::Railtie
+      rake_tasks do
+        load "octopus/rails/tasks/octopus.rake"
+      end
+    end
+  end
+
   def self.env()
     @env ||= 'octopus'
   end
 
   def self.rails_env()
-    @rails_env ||= self.rails? ? Rails.env.to_s : 'shards'
+    @rails_env ||= self.rails? ? ::Rails.env.to_s : 'shards'
   end
 
   def self.config
@@ -29,13 +37,13 @@ module Octopus
   end
 
   # Public: Whether or not Octopus is configured and should hook into the
-  # current environment. Checks the environments config option for the Rails
+  # current environment. Checks the environments config option for the ::Rails
   # environment by default.
   #
   # Returns a boolean
   def self.enabled?
     if defined?(::Rails)
-      Octopus.environments.include?(Rails.env.to_s)
+      Octopus.environments.include?(::Rails.env.to_s)
     else
       # TODO: This doens't feel right but !Octopus.config.blank? is breaking a
       #       test. Also, Octopus.config is always returning a hash.
@@ -43,10 +51,10 @@ module Octopus
     end
   end
 
-  # Returns the Rails.root_to_s when you are using rails
+  # Returns the ::Rails.root_to_s when you are using rails
   # Running the current directory in a generic Ruby process
   def self.directory()
-    @directory ||= defined?(Rails) ?  Rails.root.to_s : Dir.pwd
+    @directory ||= defined?(::Rails) ?  ::Rails.root.to_s : Dir.pwd
   end
 
   # This is the default way to do Octopus Setup
@@ -77,7 +85,7 @@ module Octopus
   end
 
   def self.rails?
-    defined?(Rails)
+    defined?(::Rails)
   end
 
   def self.shards=(shards)
