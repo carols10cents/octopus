@@ -8,6 +8,6 @@ Then /^the version of "([^"]*)" shard should be "([^"]*)"$/ do |shard_name, vers
   ab.to_s.should == version
 end
 
-When /^I run inside my Rails project "([^"]*)" with enviroment "([^"]*)"$/ do |command, enviroment|
-  run("cd #{Rails.root.to_s} && RAILS_ENV=#{enviroment} #{command}")
+When /^I run inside my Rails project "([^"]*)" with environment "([^"]*)"$/ do |command, environment|
+  run("cd #{Rails.root.to_s} && RAILS_ENV=#{environment} #{command}")
 end
