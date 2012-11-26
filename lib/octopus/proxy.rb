@@ -9,12 +9,13 @@ class Octopus::Proxy
     initialize_replication(config) if !config.nil? && config["replicated"]
   end
 
-  def initialize_shards(config)
+  def initialize_shards(config, env = Octopus.rails_env())
     @shards = HashWithIndifferentAccess.new
     @groups = {}
     @adapters = Set.new
     @shards[:master] = ActiveRecord::Base.connection_pool_without_octopus()
     @config = ActiveRecord::Base.connection_pool_without_octopus.connection.instance_variable_get(:@config)
+
     @current_shard = :master
 
     if !config.nil? && config.has_key?("verify_connection")
@@ -25,11 +26,16 @@ class Octopus::Proxy
 
     if !config.nil?
       @entire_sharded = config['entire_sharded']
-      shards_config = config[Octopus.rails_env()]
+      shards_config = config[env]
     end
 
     shards_config ||= []
 
+    init_shards_config(shards_config)
+
+  end
+
+  def init_shards_config(shards_config)
     shards_config.each do |key, value|
       if value.has_key?("adapter")
         initialize_adapter(value['adapter'])
@@ -49,6 +55,65 @@ class Octopus::Proxy
       end
     end
   end
+
+  def dump_shards_schema
+    (@shards.keys - ["master"]).each do |shard_name|
+      require 'active_record/schema_dumper'
+      File.open("#{Rails.root}/db/schema_#{shard_name}.rb", "w") do |file|
+        self.current_shard = shard_name
+        ActiveRecord::SchemaDumper.dump(select_connection, file)
+      end
+    end
+  end
+
+  def load_shards_schema
+    (@shards.keys - ["master"]).each do |shard_name|
+      file = "#{Rails.root}/db/schema_#{shard_name}.rb"
+      if File.exists?(file)
+        load(file)
+      else
+        abort %{#{file} doesn't exist yet. Run "rake db:migrate" to create it then try again. If you do not intend to use a database, you should instead alter #{Rails.root}/config/boot.rb to limit the frameworks that will be loaded}
+      end
+    end
+  end
+
+  def dump_shards_structure
+    (@shards.keys - ["master"]).each do |shard_name|
+      database_name = Octopus.config[Rails.env]["shards"][shard_name]['database']
+      `pg_dump -i -U "carolnichols" -s -x -O -f db/#{Rails.env}_#{shard_name}_structure.sql #{database_name}`
+    end
+  end
+
+  def test_shards_purge
+    initialize_shards(Octopus.config, "test")
+
+
+    (@shards.keys - ["master"]).each do |shard_name|
+
+      config = Octopus.config["test"]["shards"][shard_name]
+
+      ActiveRecord::Base.clear_active_connections!
+      ActiveRecord::Base.establish_connection(config.merge('database' => 'postgres', 'schema_search_path' => 'public'))
+      ActiveRecord::Base.connection.drop_database config['database']
+
+      ActiveRecord::Base.establish_connection(config.merge('database' => 'postgres', 'schema_search_path' => 'public'))
+      ActiveRecord::Base.connection.create_database(config['database'], config.merge('encoding' => 'utf8'))
+      ActiveRecord::Base.establish_connection(config)
+    end
+
+  end
+
+  def test_shards_load_structure
+    initialize_shards(Octopus.config, "test")
+    (@shards.keys - ["master"]).each do |shard_name|
+      filename = File.join(Rails.root, "db", "#{Rails.env}_#{shard_name}_structure.sql")
+
+      database = Octopus.config["test"]["shards"][shard_name]['database']
+
+      `psql -f "#{filename}" #{database}`
+    end
+  end
+
 
   def initialize_replication(config)
     @replicated = true

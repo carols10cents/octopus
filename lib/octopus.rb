@@ -6,10 +6,16 @@ require "yaml"
 require "erb"
 
 module Octopus
-  module Rails
-    class Railtie < ::Rails::Railtie
-      rake_tasks do
-        load "octopus/rails/tasks/octopus.rake"
+  def self.rails?
+    defined?(::Rails)
+  end
+
+  if self.rails?
+    module Rails
+      class Railtie < ::Rails::Railtie
+        rake_tasks do
+          load "octopus/rails/tasks/octopus.rake"
+        end
       end
     end
   end
@@ -82,10 +88,6 @@ module Octopus
 
   def self.rails32?
     ActiveRecord::VERSION::MAJOR == 3 && ActiveRecord::VERSION::MINOR >= 2
-  end
-
-  def self.rails?
-    defined?(::Rails)
   end
 
   def self.shards=(shards)
