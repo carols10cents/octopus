@@ -226,7 +226,7 @@ class Octopus::Proxy
         select_connection.transaction(options, &block)
       end
     elsif current_model.default_shard
-      self.run_queries_on_shard(default_shard) do
+      self.run_queries_on_shard(current_model.default_shard) do
         select_connection.transaction(options, &block)
       end
     else
