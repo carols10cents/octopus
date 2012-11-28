@@ -1,3 +1,18 @@
+# ThinkThroughMath fork
+
+Goals:
+- Functionally shard into two databases: user/school/classroom information vs student activity (by model, essentially)
+- Shard student activity further by school
+- Rails 3.2 & postgres support
+- Be able to optionally run tests with the sharding config
+
+Todo:
+- Have factories create instances in the right shard
+- Get all tests to pass
+- Is this the best/right way to be configuring octopus?
+- Would be great to have a nice way to move data between shards
+- Clean up, generalize, test, and submit patches to upstream octopus
+
 # Octopus  - Easy Database Sharding for ActiveRecord
 
 Octopus is a better way to do Database Sharding in ActiveRecord. Sharding allows multiple databases in the same rails application. While there are several projects that implement Sharding (e.g. DbCharmer, DataFabric, MultiDb), each project has its own limitations. The main goal of octopus project is to provide a better way of doing Database Sharding.
