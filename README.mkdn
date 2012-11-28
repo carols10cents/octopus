@@ -176,7 +176,7 @@ Contributors are welcome! To run the test suite, you need mysql, postgresql and 
     bundle exec rake appraisal:install
     bundle exec rake spec # This runs with only the dependencies in the main Gemfile
 
-To run with a particular appraisal (gemset), use `bundle exec rake appraisal:[appraisal-name] spec` where `[appraisal-name]` is one of `rails2`, `rails30`, `rails31`, or `rails32`. The [appraisal readme](https://github.com/thoughtbot/appraisal) claims that running `rake appraisal spec` will run all the appraisals in turn, but I just get `don't know how to build task appraisal`.
+To run with a particular appraisal (gemset), use `bundle exec rake appraisal:[appraisal-name] spec` where `[appraisal-name]` is one of `rails2`, `rails30`, `rails31`, or `rails32`. The [appraisal readme](https://github.com/thoughtbot/appraisal) claims that running `rake appraisal spec` will run all the appraisals in turn, but for me it just runs the first appraisal and stops.
 
 If you get errors about database usernames, such as `role "postgres" does not exist`, you will probably need to set the environment variables MYSQL_USER and/or POSTGRES_USER. See the Rakefile for more details.
 
