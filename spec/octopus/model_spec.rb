@@ -262,6 +262,12 @@ describe Octopus::Model do
       CustomConnection.connection.current_database.should == "octopus_shard_2"
     end
 
+    describe "using a particular shard for all instances of a model" do
+      it "uses a particular shard" do
+        ModelUsingAShard.connection.current_database.should == "octopus_shard_2"
+      end
+    end
+
     it "increment" do
       u = User.using(:brazil).create!(:name => "Teste", :number => 10)
       u = User.using(:brazil).find_by_number(10)

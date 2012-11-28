@@ -153,6 +153,10 @@ module Octopus::Model
       end
     end
 
+    def use(shard)
+      establish_connection self.connection.instance_variable_get(:@shards)[shard].instance_variable_get(:@spec).instance_variable_get(:@config)
+    end
+
     def establish_connection_with_octopus(spec = nil)
       # Checking for self != ActiveRecord::Base is probably unnecessary in real-world usage,
       # but the test suite uses establish_connection instead of a database.yml to set the
