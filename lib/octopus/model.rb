@@ -125,6 +125,7 @@ module Octopus::Model
     def self.extended(base)
       base.class_attribute(:replicated)
       base.class_attribute(:sharded)
+      base.class_attribute(:default_shard)
       base.hijack_methods
     end
 
@@ -154,7 +155,7 @@ module Octopus::Model
     end
 
     def use(shard)
-      establish_connection self.connection.instance_variable_get(:@shards)[shard].instance_variable_get(:@spec).instance_variable_get(:@config)
+      self.default_shard = shard
     end
 
     def establish_connection_with_octopus(spec = nil)
