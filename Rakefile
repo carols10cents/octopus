@@ -119,6 +119,10 @@ namespace :db do
       BlankModel.using(shard_symbol).connection.create_table(:yummy) do |u|
         u.string :name
       end
+
+      BlankModel.using(shard_symbol).connection.create_table(:things) do |u|
+        u.string :name
+      end
     end
   end
 

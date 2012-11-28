@@ -28,8 +28,8 @@ class CustomConnection < ActiveRecord::Base
   establish_connection(:adapter => "mysql", :database => "octopus_shard_2", :username => "root", :password => "")
 end
 
-#This class uses a particular shard
-class ModelUsingAShard < ActiveRecord::Base
+#This model always uses a particular shard
+class Thing < ActiveRecord::Base
   use(:canada)
 end
 

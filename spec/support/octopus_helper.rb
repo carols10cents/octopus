@@ -1,7 +1,7 @@
 def clean_all_shards()
   @@shards ||= BlankModel.using(:master).connection.instance_variable_get(:@shards).keys
   @@shards.each do |shard_symbol|
-    ['schema_migrations', 'users', 'clients', 'cats', 'items', 'keyboards', 'computers', 'permissions_roles', 'roles', 'permissions', 'assignments', 'projects', 'programmers', "yummy"].each do |tables|
+    ['schema_migrations', 'users', 'clients', 'cats', 'items', 'keyboards', 'computers', 'permissions_roles', 'roles', 'permissions', 'assignments', 'projects', 'programmers', "yummy", "things"].each do |tables|
       BlankModel.using(shard_symbol).connection.execute("DELETE FROM #{tables}")
     end
   end

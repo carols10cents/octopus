@@ -264,7 +264,16 @@ describe Octopus::Model do
 
     describe "using a particular shard for all instances of a model" do
       it "uses a particular shard" do
-        ModelUsingAShard.connection.current_database.should == "octopus_shard_2"
+        Thing.connection.current_database.should == "octopus_shard_2"
+      end
+
+      it "really works" do
+        t = Thing.create!(:name => "Some name")
+
+        Thing.all.should == [t]
+        Thing.using(:canada).all.should == [t]
+        Thing.using(:master).all.should == []
+        Thing.using(:brazil).all.should == []
       end
     end
 
