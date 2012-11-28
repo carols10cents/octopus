@@ -9,6 +9,14 @@ class Octopus::Proxy
     initialize_replication(config) if !config.nil? && config["replicated"]
   end
 
+  def default_shard
+    if current_model && current_model.default_shard
+       current_model.default_shard
+    else
+      :master
+    end
+  end
+
   def initialize_shards(config, env = Octopus.rails_env())
     @shards = HashWithIndifferentAccess.new
     @groups = {}
@@ -16,7 +24,7 @@ class Octopus::Proxy
     @shards[:master] = ActiveRecord::Base.connection_pool_without_octopus()
     @config = ActiveRecord::Base.connection_pool_without_octopus.connection.instance_variable_get(:@config)
 
-    @current_shard = :master
+    @current_shard = default_shard
 
     if !config.nil? && config.has_key?("verify_connection")
       @verify_connection = config["verify_connection"]
@@ -209,7 +217,7 @@ class Octopus::Proxy
   end
 
   def clean_proxy()
-    @current_shard = :master
+    @current_shard = default_shard
     @current_group = nil
     @block = false
   end
@@ -222,7 +230,7 @@ class Octopus::Proxy
 
   def transaction(options = {}, &block)
     if @replicated && (current_model.replicated || @fully_replicated)
-      self.run_queries_on_shard(:master) do
+      self.run_queries_on_shard(default_shard) do
         select_connection.transaction(options, &block)
       end
     elsif current_model.default_shard
@@ -235,14 +243,31 @@ class Octopus::Proxy
   end
 
   def method_missing(method, *args, &block)
+    if method == :current_database
+      puts "yep"
+    end
     if should_clean_connection?(method)
+      if method == :current_database
+        puts "should clean conn"
+      end
       conn = select_connection()
       self.last_current_shard = self.current_shard
       clean_proxy()
       conn.send(method, *args, &block)
     elsif should_send_queries_to_replicated_databases?(method)
+      if method == :current_database
+        puts "should send to repl"
+      end
       send_queries_to_selected_slave(method, *args, &block)
     else
+      if method == :current_database
+        puts "general case"
+        puts "current_model = #{current_model.inspect}"
+        puts "current_model.default_shard = #{current_model.default_shard}"
+        puts "default shard = #{default_shard}"
+        puts "shard_name = #{shard_name}"
+
+      end
       select_connection().send(method, *args, &block)
     end
   end
@@ -284,7 +309,7 @@ class Octopus::Proxy
       if current_model.replicated || @fully_replicated
         self.current_shard = @slaves_list[@slave_index = (@slave_index + 1) % @slaves_list.length]
       else
-        self.current_shard = :master
+        self.current_shard = default_shard
       end
 
       select_connection.send(method, *args, &block)
